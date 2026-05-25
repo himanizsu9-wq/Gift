@@ -339,12 +339,15 @@ const storageKey = "hw-anniversary-v1";
 const photoKey = "hw-pluto-photos-v1";
 const tryKey = "hw-try-list-v1";
 const bucketKey = "hw-bucket-list-v1";
+const sharedStateId = "main";
 
 let reasonIndex = 0;
 let movies = loadMovies();
 let plutoPhotos = loadPhotos();
 let tryItems = loadTryItems();
 let bucketItems = loadBucketItems();
+let supabaseClient = null;
+let syncTimer = null;
 
 const reasonCard = document.querySelector("#reason-card");
 const reasonCount = document.querySelector("#reason-count");
@@ -464,6 +467,7 @@ function loadMovies() {
 
 function saveMovies() {
   localStorage.setItem(storageKey, JSON.stringify(movies));
+  syncState();
 }
 
 function renderMovies() {
@@ -536,6 +540,7 @@ function loadPhotos() {
 
 function savePhotos() {
   localStorage.setItem(photoKey, JSON.stringify(plutoPhotos));
+  syncState();
 }
 
 function loadTryItems() {
@@ -548,6 +553,7 @@ function loadTryItems() {
 
 function saveTryItems() {
   localStorage.setItem(tryKey, JSON.stringify(tryItems));
+  syncState();
 }
 
 function renderTryItems() {
@@ -619,6 +625,106 @@ function loadBucketItems() {
 
 function saveBucketItems() {
   localStorage.setItem(bucketKey, JSON.stringify(bucketItems));
+  syncState();
+}
+
+function appState() {
+  return {
+    movies,
+    plutoPhotos,
+    tryItems,
+    bucketItems
+  };
+}
+
+function saveLocalState() {
+  localStorage.setItem(storageKey, JSON.stringify(movies));
+  localStorage.setItem(photoKey, JSON.stringify(plutoPhotos));
+  localStorage.setItem(tryKey, JSON.stringify(tryItems));
+  localStorage.setItem(bucketKey, JSON.stringify(bucketItems));
+}
+
+function applyState(data) {
+  if (!data || typeof data !== "object") return;
+  movies = data.movies || movies;
+  plutoPhotos = data.plutoPhotos || plutoPhotos;
+  tryItems = data.tryItems || tryItems;
+  bucketItems = data.bucketItems || bucketItems;
+  saveLocalState();
+  renderMovies();
+  renderPhotos();
+  renderTryItems();
+  renderBucketItems();
+}
+
+function setSyncStatus(message) {
+  const status = document.querySelector("#sync-status");
+  if (status) status.textContent = message;
+}
+
+function hasSupabaseConfig() {
+  const config = window.GIFT_SUPABASE || {};
+  return Boolean(config.url && config.anonKey && window.supabase);
+}
+
+async function initSharedSave() {
+  if (!hasSupabaseConfig()) {
+    setSyncStatus("Saved on this browser");
+    return;
+  }
+
+  const { url, anonKey } = window.GIFT_SUPABASE;
+  supabaseClient = window.supabase.createClient(url, anonKey);
+  setSyncStatus("Connecting shared save...");
+
+  try {
+    const { data, error } = await supabaseClient
+      .from("gift_state")
+      .select("data")
+      .eq("id", sharedStateId)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    if (data && data.data) {
+      applyState(data.data);
+      setSyncStatus("Shared save connected");
+    } else {
+      await syncStateNow();
+    }
+  } catch (error) {
+    console.warn("Supabase sync unavailable:", error);
+    setSyncStatus("Saved on this browser");
+  }
+}
+
+function syncState() {
+  saveLocalState();
+  if (!supabaseClient) return;
+
+  window.clearTimeout(syncTimer);
+  syncTimer = window.setTimeout(syncStateNow, 450);
+}
+
+async function syncStateNow() {
+  if (!supabaseClient) return;
+  setSyncStatus("Saving...");
+
+  try {
+    const { error } = await supabaseClient
+      .from("gift_state")
+      .upsert({
+        id: sharedStateId,
+        data: appState(),
+        updated_at: new Date().toISOString()
+      });
+
+    if (error) throw error;
+    setSyncStatus("Shared save connected");
+  } catch (error) {
+    console.warn("Supabase save failed:", error);
+    setSyncStatus("Saved on this browser");
+  }
 }
 
 function renderBucketItems() {
@@ -696,3 +802,4 @@ renderMovies();
 renderPhotos();
 renderTryItems();
 renderBucketItems();
+initSharedSave();
