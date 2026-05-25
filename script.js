@@ -348,6 +348,7 @@ let tryItems = loadTryItems();
 let bucketItems = loadBucketItems();
 let supabaseClient = null;
 let syncTimer = null;
+let remoteUpdatedAt = "";
 
 const reasonCard = document.querySelector("#reason-card");
 const reasonCount = document.querySelector("#reason-count");
@@ -680,18 +681,21 @@ async function initSharedSave() {
   try {
     const { data, error } = await supabaseClient
       .from("gift_state")
-      .select("data")
+      .select("data, updated_at")
       .eq("id", sharedStateId)
       .maybeSingle();
 
     if (error) throw error;
 
     if (data && data.data) {
+      remoteUpdatedAt = data.updated_at || "";
       applyState(data.data);
       setSyncStatus("Shared save connected");
     } else {
       await syncStateNow();
     }
+
+    window.setInterval(fetchSharedState, 7000);
   } catch (error) {
     console.warn("Supabase sync unavailable:", error);
     setSyncStatus("Saved on this browser");
@@ -720,10 +724,32 @@ async function syncStateNow() {
       });
 
     if (error) throw error;
+    remoteUpdatedAt = new Date().toISOString();
     setSyncStatus("Shared save connected");
   } catch (error) {
     console.warn("Supabase save failed:", error);
     setSyncStatus("Saved on this browser");
+  }
+}
+
+async function fetchSharedState() {
+  if (!supabaseClient) return;
+
+  try {
+    const { data, error } = await supabaseClient
+      .from("gift_state")
+      .select("data, updated_at")
+      .eq("id", sharedStateId)
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data || !data.updated_at || data.updated_at <= remoteUpdatedAt) return;
+
+    remoteUpdatedAt = data.updated_at;
+    applyState(data.data);
+    setSyncStatus("Shared save connected");
+  } catch (error) {
+    console.warn("Supabase refresh failed:", error);
   }
 }
 
