@@ -1,4 +1,5 @@
 .pluto-extract/
+.tools/
 .DS_Store
 Thumbs.db
 node_modules/

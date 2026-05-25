@@ -198,58 +198,58 @@ const defaultMovies = {
 };
 
 const permanentPlutoPhotos = [
-  "pluto-01.heic",
-  "pluto-02.heic",
+  "pluto-01.jpg",
+  "pluto-02.jpg",
   "pluto-03.png",
   "pluto-04.png",
   "pluto-05.jpg",
-  "pluto-06.heic",
-  "pluto-07.heic",
-  "pluto-08.heic",
-  "pluto-09.heic",
-  "pluto-10.heic",
-  "pluto-11.heic",
-  "pluto-12.heic",
-  "pluto-13.heic",
-  "pluto-14.heic",
-  "pluto-15.heic",
-  "pluto-16.heic",
-  "pluto-17.heic",
-  "pluto-18.heic",
-  "pluto-19.heic",
-  "pluto-20.heic",
-  "pluto-21.heic",
-  "pluto-22.heic",
-  "pluto-23.heic",
-  "pluto-24.heic",
-  "pluto-25.heic",
-  "pluto-26.heic",
-  "pluto-27.heic",
-  "pluto-28.heic",
-  "pluto-29.heic",
-  "pluto-30.heic",
-  "pluto-31.heic",
-  "pluto-32.heic",
-  "pluto-33.heic",
-  "pluto-34.heic",
-  "pluto-35.heic",
-  "pluto-36.heic",
-  "pluto-37.heic",
-  "pluto-38.heic",
-  "pluto-39.heic",
-  "pluto-40.heic",
-  "pluto-41.heic",
-  "pluto-42.heic",
-  "pluto-43.heic",
-  "pluto-44.heic",
-  "pluto-45.heic",
-  "pluto-46.heic",
-  "pluto-47.heic",
-  "pluto-48.heic",
-  "pluto-49.heic",
-  "pluto-50.heic",
-  "pluto-51.heic",
-  "pluto-52.heic"
+  "pluto-06.jpg",
+  "pluto-07.jpg",
+  "pluto-08.jpg",
+  "pluto-09.jpg",
+  "pluto-10.jpg",
+  "pluto-11.jpg",
+  "pluto-12.jpg",
+  "pluto-13.jpg",
+  "pluto-14.jpg",
+  "pluto-15.jpg",
+  "pluto-16.jpg",
+  "pluto-17.jpg",
+  "pluto-18.jpg",
+  "pluto-19.jpg",
+  "pluto-20.jpg",
+  "pluto-21.jpg",
+  "pluto-22.jpg",
+  "pluto-23.jpg",
+  "pluto-24.jpg",
+  "pluto-25.jpg",
+  "pluto-26.jpg",
+  "pluto-27.jpg",
+  "pluto-28.jpg",
+  "pluto-29.jpg",
+  "pluto-30.jpg",
+  "pluto-31.jpg",
+  "pluto-32.jpg",
+  "pluto-33.jpg",
+  "pluto-34.jpg",
+  "pluto-35.jpg",
+  "pluto-36.jpg",
+  "pluto-37.jpg",
+  "pluto-38.jpg",
+  "pluto-39.jpg",
+  "pluto-40.jpg",
+  "pluto-41.jpg",
+  "pluto-42.jpg",
+  "pluto-43.jpg",
+  "pluto-44.jpg",
+  "pluto-45.jpg",
+  "pluto-46.jpg",
+  "pluto-47.jpg",
+  "pluto-48.jpg",
+  "pluto-49.jpg",
+  "pluto-50.jpg",
+  "pluto-51.jpg",
+  "pluto-52.jpg"
 ].map((name, index) => ({
   name: `Pluto photo ${index + 1}`,
   src: `assets/pluto/${name}`,
@@ -428,12 +428,7 @@ function savePhotos() {
 
 function renderPhotos() {
   const grid = document.querySelector("#pluto-grid");
-  const sortedPermanentPhotos = [...permanentPlutoPhotos].sort((a, b) => {
-    const aIsHeic = a.src.toLowerCase().endsWith(".heic");
-    const bIsHeic = b.src.toLowerCase().endsWith(".heic");
-    return Number(aIsHeic) - Number(bIsHeic);
-  });
-  const allPhotos = [...plutoPhotos, ...sortedPermanentPhotos];
+  const allPhotos = [...plutoPhotos, ...permanentPlutoPhotos];
   if (!allPhotos.length) {
     grid.innerHTML = `
       <div class="empty-album">
@@ -450,8 +445,7 @@ function renderPhotos() {
     .map(
       (photo) => `
         <figure class="pluto-photo">
-          <img src="${photo.src}" alt="${escapeHtml(photo.name || "Pluto photo")}" onerror="this.closest('.pluto-photo').classList.add('unsupported')" />
-          <figcaption>${photo.permanent ? "Open on an Apple device if this HEIC does not preview here." : "Local photo"}</figcaption>
+          <img src="${photo.src}" alt="${escapeHtml(photo.name || "Pluto photo")}" />
         </figure>
       `
     )

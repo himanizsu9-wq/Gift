@@ -402,28 +402,6 @@ input:focus {
   display: block;
 }
 
-.pluto-photo figcaption {
-  display: none;
-}
-
-.pluto-photo.unsupported {
-  display: grid;
-  place-items: center;
-  padding: 18px;
-  text-align: center;
-}
-
-.pluto-photo.unsupported img {
-  display: none;
-}
-
-.pluto-photo.unsupported figcaption {
-  display: block;
-  color: var(--muted);
-  font-weight: 800;
-  line-height: 1.4;
-}
-
 .empty-album {
   grid-column: 1 / -1;
   display: grid;
