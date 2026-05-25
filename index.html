@@ -19,24 +19,23 @@
           <p class="eyebrow">Four years of us</p>
           <h1>Himani + William</h1>
         </div>
-        <p class="date-pill">Our little sunset archive</p>
+        <p class="date-pill">Watch how I mog you chud</p>
       </header>
 
       <nav class="tabs" aria-label="Anniversary sections">
         <button class="tab-button active" type="button" data-tab="love">Reasons</button>
         <button class="tab-button" type="button" data-tab="movies">H+W Movie List</button>
         <button class="tab-button" type="button" data-tab="pluto">Pluto Album</button>
+        <button class="tab-button" type="button" data-tab="try">Things to Try</button>
+        <button class="tab-button" type="button" data-tab="bucket">Bucket List</button>
       </nav>
 
       <main>
         <section class="tab-panel active" id="love" aria-labelledby="love-tab">
           <div class="section-heading">
-            <p class="eyebrow">100+ reasons, cleaned up</p>
+            <p class="eyebrow">100+ Reasons</p>
             <h2>Why I love you</h2>
-            <p>
-              A little card deck of the things that make this love feel close,
-              even when distance tries to be dramatic.
-            </p>
+            <p>So you don't have to open the Notes app every time.</p>
           </div>
 
           <div class="reason-layout">
@@ -58,7 +57,7 @@
           <div class="section-heading">
             <p class="eyebrow">Our watch history</p>
             <h2>H+W Movie List</h2>
-            <p>The official record of perfect ratings, questionable ratings, and future movie nights.</p>
+            <p>The offical record of movies, watched and unwatched.</p>
           </div>
 
           <div class="movie-board">
@@ -108,7 +107,7 @@
           <div class="section-heading">
             <p class="eyebrow">For Pluto</p>
             <h2>Pluto Album</h2>
-            <p>A tiny sunset wall for the smallest member of the family archive.</p>
+            <p>So you don't forget about fat chud when you're studying.</p>
           </div>
 
           <div class="album-tools">
@@ -125,6 +124,60 @@
               <p>Waiting on the first Pluto picture.</p>
             </div>
           </div>
+        </section>
+
+        <section class="tab-panel" id="try" aria-labelledby="try-tab">
+          <div class="section-heading">
+            <p class="eyebrow">Tiny schemes</p>
+            <h2>Things we want to try</h2>
+            <p>Restaurants, recipes, and other little missions for later.</p>
+          </div>
+
+          <form class="sketch-form" id="try-form">
+            <label>
+              Name
+              <input type="text" name="name" placeholder="Place, recipe, or idea" required />
+            </label>
+            <label>
+              Type
+              <select name="type">
+                <option value="Restaurant">Restaurant</option>
+                <option value="Recipe">Recipe</option>
+                <option value="Activity">Activity</option>
+                <option value="Dessert">Dessert</option>
+              </select>
+            </label>
+            <label>
+              Location
+              <input type="text" name="location" placeholder="City, address, or 'home'" />
+            </label>
+            <label class="wide-field">
+              Recipe / notes
+              <textarea name="notes" placeholder="Ingredients, link, order, or tiny lore"></textarea>
+            </label>
+            <label class="upload-button">
+              Add picture
+              <input type="file" name="photo" accept="image/*" />
+            </label>
+            <button class="primary-button" type="submit">Add idea</button>
+          </form>
+
+          <div class="try-groups" id="try-groups"></div>
+        </section>
+
+        <section class="tab-panel" id="bucket" aria-labelledby="bucket-tab">
+          <div class="section-heading">
+            <p class="eyebrow">Big schemes</p>
+            <h2>Bucket list</h2>
+            <p>Click anything when it finally becomes lore.</p>
+          </div>
+
+          <form class="bucket-form" id="bucket-form">
+            <input type="text" name="item" placeholder="Add another unhinged dream" required />
+            <button class="primary-button" type="submit">Add</button>
+          </form>
+
+          <div class="bucket-list" id="bucket-list"></div>
         </section>
       </main>
     </div>

@@ -197,6 +197,85 @@ const defaultMovies = {
   ]
 };
 
+const defaultTryItems = [
+  {
+    name: "Raising Cane's",
+    type: "Restaurant",
+    location: "",
+    notes: "Chicken, sauce, and post-study damage."
+  },
+  {
+    name: "Wingstop again with ranch fountain",
+    type: "Restaurant",
+    location: "",
+    notes: "A redemption arc."
+  },
+  {
+    name: "Bake together",
+    type: "Recipe",
+    location: "Home",
+    notes: "Something chaotic and probably too sweet."
+  },
+  {
+    name: "Cook together",
+    type: "Recipe",
+    location: "Home",
+    notes: "Real dinner. Maybe."
+  }
+];
+
+const defaultBucketItems = [
+  "Go to Bora Bora",
+  "Visit Antarctica once before it melts",
+  "Visit Venice once before it sinks",
+  "Have kids",
+  "Disneyland/world",
+  "Universal Studios",
+  "Japan + Disneyworld && Universals",
+  "South Korea",
+  "Van life",
+  "Camping",
+  "Finger William's Bootyhole",
+  "Road-trip",
+  "Painting pottery",
+  "Bake together",
+  "Cook together",
+  "Emirates first class flight",
+  "Dubai + aquarium",
+  "Singapore",
+  "Italy",
+  "Finally figure out which one is better, Seattle or Montreal? (Obv Seattle)",
+  "Laser tag",
+  "Paintball",
+  "Airsoft",
+  "Go to Game Awards once",
+  "Otakucon",
+  "Teach William how to surf",
+  "Reach top 500",
+  "Get married",
+  "Cruise",
+  "Go karting",
+  "Snorkeling",
+  "Have a cat and dog",
+  "Matching tattoos",
+  "Really really really really faded order 30 sliders 5 fries and 4 large cherry cokes each while watching Harold and Kumar",
+  "Raising Cane's",
+  "Popeyes",
+  "Chipotle",
+  "TRY Wingstop again with ranch fountain",
+  "Have a crazy rich Asian wedding",
+  "Move in with each other",
+  "Watch the northern lights together, preferably out of the city",
+  "Marry you",
+  "Thailand",
+  "Go to the dome (VEGAS)",
+  "Georgia Aquarium",
+  "Get an awkward wiener dog and a chaotic guinea pig?",
+  "P......play... Subnautica",
+  "Play RE9",
+  "Go to a comedy show"
+].map((text) => ({ text, done: false }));
+
 const permanentPlutoPhotos = [
   "pluto-01.jpg",
   "pluto-02.jpg",
@@ -258,10 +337,14 @@ const permanentPlutoPhotos = [
 
 const storageKey = "hw-anniversary-v1";
 const photoKey = "hw-pluto-photos-v1";
+const tryKey = "hw-try-list-v1";
+const bucketKey = "hw-bucket-list-v1";
 
 let reasonIndex = 0;
 let movies = loadMovies();
 let plutoPhotos = loadPhotos();
+let tryItems = loadTryItems();
+let bucketItems = loadBucketItems();
 
 const reasonCard = document.querySelector("#reason-card");
 const reasonCount = document.querySelector("#reason-count");
@@ -320,6 +403,35 @@ document.querySelector("#clear-pluto").addEventListener("click", () => {
   plutoPhotos = [];
   savePhotos();
   renderPhotos();
+});
+
+document.querySelector("#try-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const formElement = event.currentTarget;
+  const form = new FormData(formElement);
+  const file = form.get("photo");
+  const photo = file && file.size ? await readPhoto(file) : null;
+
+  tryItems.unshift({
+    name: form.get("name").trim(),
+    type: form.get("type"),
+    location: form.get("location").trim(),
+    notes: form.get("notes").trim(),
+    photo: photo ? photo.src : ""
+  });
+
+  formElement.reset();
+  saveTryItems();
+  renderTryItems();
+});
+
+document.querySelector("#bucket-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const form = new FormData(event.currentTarget);
+  bucketItems.unshift({ text: form.get("item").trim(), done: false });
+  event.currentTarget.reset();
+  saveBucketItems();
+  renderBucketItems();
 });
 
 function setReason(index, animate = false) {
@@ -426,6 +538,124 @@ function savePhotos() {
   localStorage.setItem(photoKey, JSON.stringify(plutoPhotos));
 }
 
+function loadTryItems() {
+  try {
+    return JSON.parse(localStorage.getItem(tryKey)) || structuredClone(defaultTryItems);
+  } catch {
+    return structuredClone(defaultTryItems);
+  }
+}
+
+function saveTryItems() {
+  localStorage.setItem(tryKey, JSON.stringify(tryItems));
+}
+
+function renderTryItems() {
+  const groups = document.querySelector("#try-groups");
+  const types = ["Restaurant", "Recipe", "Activity", "Dessert"];
+  groups.innerHTML = types
+    .map((type) => {
+      const items = tryItems.filter((item) => item.type === type);
+      return `
+        <section class="try-group">
+          <div class="column-head">
+            <h3><span aria-hidden="true">${typeIcon(type)}</span> ${escapeHtml(type)}</h3>
+            <span>${items.length}</span>
+          </div>
+          <div class="try-list">
+            ${
+              items.length
+                ? items.map((item) => tryTemplate(item, tryItems.indexOf(item))).join("")
+                : `<p class="empty-note">Nothing here yet.</p>`
+            }
+          </div>
+        </section>
+      `;
+    })
+    .join("");
+
+  groups.querySelectorAll("[data-delete-try]").forEach((button) => {
+    button.addEventListener("click", () => {
+      tryItems.splice(Number(button.dataset.deleteTry), 1);
+      saveTryItems();
+      renderTryItems();
+    });
+  });
+}
+
+function tryTemplate(item, index) {
+  return `
+    <article class="try-card">
+      ${item.photo ? `<img src="${item.photo}" alt="${escapeHtml(item.name)}" />` : ""}
+      <div>
+        <div class="movie-title-row">
+          <h4 class="movie-title">${escapeHtml(item.name)}</h4>
+          <button class="delete-button" type="button" aria-label="Delete ${escapeHtml(item.name)}" data-delete-try="${index}">&times;</button>
+        </div>
+        ${item.location ? `<p class="detail-line">${escapeHtml(item.location)}</p>` : ""}
+        ${item.notes ? `<p class="try-notes">${escapeHtml(item.notes)}</p>` : ""}
+      </div>
+    </article>
+  `;
+}
+
+function typeIcon(type) {
+  const icons = {
+    Restaurant: "🍜",
+    Recipe: "🥣",
+    Activity: "🎟️",
+    Dessert: "🍰"
+  };
+  return icons[type] || "✦";
+}
+
+function loadBucketItems() {
+  try {
+    return JSON.parse(localStorage.getItem(bucketKey)) || structuredClone(defaultBucketItems);
+  } catch {
+    return structuredClone(defaultBucketItems);
+  }
+}
+
+function saveBucketItems() {
+  localStorage.setItem(bucketKey, JSON.stringify(bucketItems));
+}
+
+function renderBucketItems() {
+  const list = document.querySelector("#bucket-list");
+  list.innerHTML = bucketItems.map((item, index) => bucketTemplate(item, index)).join("");
+
+  list.querySelectorAll("[data-toggle-bucket]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const item = bucketItems[Number(button.dataset.toggleBucket)];
+      item.done = !item.done;
+      saveBucketItems();
+      renderBucketItems();
+    });
+  });
+
+  list.querySelectorAll("[data-delete-bucket]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      bucketItems.splice(Number(button.dataset.deleteBucket), 1);
+      saveBucketItems();
+      renderBucketItems();
+    });
+  });
+}
+
+function bucketTemplate(item, index) {
+  return `
+    <article class="bucket-item ${item.done ? "done" : ""}">
+      <button type="button" class="bucket-toggle" data-toggle-bucket="${index}" aria-pressed="${item.done}">
+        <span class="checkmark">${item.done ? "✓" : ""}</span>
+        <span>${escapeHtml(item.text)}</span>
+      </button>
+      <button class="delete-button" type="button" aria-label="Delete bucket item" data-delete-bucket="${index}">&times;</button>
+    </article>
+  `;
+}
+
 function renderPhotos() {
   const grid = document.querySelector("#pluto-grid");
   const allPhotos = [...plutoPhotos, ...permanentPlutoPhotos];
@@ -464,3 +694,5 @@ function escapeHtml(value) {
 setReason(0);
 renderMovies();
 renderPhotos();
+renderTryItems();
+renderBucketItems();
