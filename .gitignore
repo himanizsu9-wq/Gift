@@ -1,0 +1,8 @@
+.pluto-extract/
+.DS_Store
+Thumbs.db
+node_modules/
+.vercel/
+Gift.zip
+preview.png
+pluto-preview.png

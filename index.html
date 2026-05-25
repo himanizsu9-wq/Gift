@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>H + W Anniversary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Four years of us</p>
+          <h1>Himani + William</h1>
+        </div>
+        <p class="date-pill">Our little sunset archive</p>
+      </header>
+
+      <nav class="tabs" aria-label="Anniversary sections">
+        <button class="tab-button active" type="button" data-tab="love">Reasons</button>
+        <button class="tab-button" type="button" data-tab="movies">H+W Movie List</button>
+        <button class="tab-button" type="button" data-tab="pluto">Pluto Album</button>
+      </nav>
+
+      <main>
+        <section class="tab-panel active" id="love" aria-labelledby="love-tab">
+          <div class="section-heading">
+            <p class="eyebrow">100+ reasons, cleaned up</p>
+            <h2>Why I love you</h2>
+            <p>
+              A little card deck of the things that make this love feel close,
+              even when distance tries to be dramatic.
+            </p>
+          </div>
+
+          <div class="reason-layout">
+            <article class="reason-card" id="reason-card" aria-live="polite">
+              <span class="reason-count" id="reason-count">Reason 1</span>
+              <p id="reason-text"></p>
+            </article>
+
+            <div class="reason-controls">
+              <button class="icon-button" type="button" id="prev-reason" aria-label="Previous reason">&lsaquo;</button>
+              <button class="primary-button" type="button" id="flip-reason">Flip</button>
+              <button class="icon-button" type="button" id="next-reason" aria-label="Next reason">&rsaquo;</button>
+              <button class="secondary-button" type="button" id="random-reason">Surprise me</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="movies" aria-labelledby="movies-tab">
+          <div class="section-heading">
+            <p class="eyebrow">Our watch history</p>
+            <h2>H+W Movie List</h2>
+            <p>The official record of perfect ratings, questionable ratings, and future movie nights.</p>
+          </div>
+
+          <div class="movie-board">
+            <section class="movie-column" aria-labelledby="watched-heading">
+              <div class="column-head">
+                <h3 id="watched-heading">Watched</h3>
+                <span id="watched-count">0</span>
+              </div>
+              <form class="movie-form" id="watched-form">
+                <label>
+                  Movie
+                  <input type="text" name="title" placeholder="Movie title" required />
+                </label>
+                <div class="rating-row">
+                  <label>
+                    Himani
+                    <input type="text" name="himani" placeholder="10/10" />
+                  </label>
+                  <label>
+                    William
+                    <input type="text" name="william" placeholder="10/10" />
+                  </label>
+                </div>
+                <button class="primary-button" type="submit">Add watched</button>
+              </form>
+              <div class="movie-list" id="watched-list"></div>
+            </section>
+
+            <section class="movie-column" aria-labelledby="want-heading">
+              <div class="column-head">
+                <h3 id="want-heading">Want to Watch</h3>
+                <span id="want-count">0</span>
+              </div>
+              <form class="movie-form" id="want-form">
+                <label>
+                  Movie
+                  <input type="text" name="title" placeholder="Movie title" required />
+                </label>
+                <button class="primary-button" type="submit">Add plan</button>
+              </form>
+              <div class="movie-list" id="want-list"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="pluto" aria-labelledby="pluto-tab">
+          <div class="section-heading">
+            <p class="eyebrow">For Pluto</p>
+            <h2>Pluto Album</h2>
+            <p>A tiny sunset wall for the smallest member of the family archive.</p>
+          </div>
+
+          <div class="album-tools">
+            <label class="upload-button">
+              Add Pluto photos
+              <input id="pluto-upload" type="file" accept="image/*" multiple />
+            </label>
+            <button class="secondary-button" type="button" id="clear-pluto">Clear local album</button>
+          </div>
+
+          <div class="pluto-grid" id="pluto-grid">
+            <div class="empty-album">
+              <h3>Pluto's album is ready.</h3>
+              <p>Waiting on the first Pluto picture.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
