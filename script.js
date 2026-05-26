@@ -353,6 +353,8 @@ let remoteUpdatedAt = "";
 const reasonCard = document.querySelector("#reason-card");
 const reasonCount = document.querySelector("#reason-count");
 const reasonText = document.querySelector("#reason-text");
+const photoDialog = document.querySelector("#photo-dialog");
+const photoDialogImage = document.querySelector("#photo-dialog-image");
 
 document.querySelectorAll(".tab-button").forEach((button) => {
   button.addEventListener("click", () => {
@@ -363,8 +365,6 @@ document.querySelectorAll(".tab-button").forEach((button) => {
   });
 });
 
-document.querySelector("#prev-reason").addEventListener("click", () => changeReason(-1));
-document.querySelector("#next-reason").addEventListener("click", () => changeReason(1));
 document.querySelector("#flip-reason").addEventListener("click", () => changeReason(1));
 document.querySelector("#random-reason").addEventListener("click", () => {
   let next = Math.floor(Math.random() * reasons.length);
@@ -438,6 +438,11 @@ document.querySelector("#bucket-form").addEventListener("submit", (event) => {
   renderBucketItems();
 });
 
+document.querySelector("#close-photo").addEventListener("click", () => photoDialog.close());
+photoDialog.addEventListener("click", (event) => {
+  if (event.target === photoDialog) photoDialog.close();
+});
+
 function setReason(index, animate = false) {
   reasonIndex = (index + reasons.length) % reasons.length;
   if (animate) {
@@ -494,6 +499,15 @@ function renderMovies() {
       renderMovies();
     });
   });
+
+  watchedList.querySelectorAll("[data-rating-index]").forEach((input) => {
+    input.addEventListener("change", () => {
+      const movie = movies.watched[Number(input.dataset.ratingIndex)];
+      movie[input.dataset.ratingPerson] = input.value.trim();
+      saveMovies();
+      renderMovies();
+    });
+  });
 }
 
 function watchedTemplate(movie, index) {
@@ -504,8 +518,14 @@ function watchedTemplate(movie, index) {
         <button class="delete-button" type="button" aria-label="Delete ${escapeHtml(movie.title)}" data-delete="${index}">&times;</button>
       </div>
       <div class="ratings">
-        <span>Himani: ${escapeHtml(movie.himani || "not rated yet")}</span>
-        <span>William: ${escapeHtml(movie.william || "not rated yet")}</span>
+        <label>
+          Himani
+          <input type="text" value="${escapeHtml(movie.himani || "")}" placeholder="not rated yet" data-rating-index="${index}" data-rating-person="himani" />
+        </label>
+        <label>
+          William
+          <input type="text" value="${escapeHtml(movie.william || "")}" placeholder="not rated yet" data-rating-index="${index}" data-rating-person="william" />
+        </label>
       </div>
     </article>
   `;
@@ -588,15 +608,27 @@ function renderTryItems() {
       renderTryItems();
     });
   });
+
+  groups.querySelectorAll("[data-toggle-try]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const item = tryItems[Number(button.dataset.toggleTry)];
+      item.done = !item.done;
+      saveTryItems();
+      renderTryItems();
+    });
+  });
 }
 
 function tryTemplate(item, index) {
   return `
-    <article class="try-card">
+    <article class="try-card ${item.done ? "done" : ""}">
       ${item.photo ? `<img src="${item.photo}" alt="${escapeHtml(item.name)}" />` : ""}
       <div>
         <div class="movie-title-row">
-          <h4 class="movie-title">${escapeHtml(item.name)}</h4>
+          <button class="try-check" type="button" data-toggle-try="${index}" aria-pressed="${Boolean(item.done)}">
+            <span class="checkmark">${item.done ? "✓" : ""}</span>
+            <span class="movie-title">${escapeHtml(item.name)}</span>
+          </button>
           <button class="delete-button" type="button" aria-label="Delete ${escapeHtml(item.name)}" data-delete-try="${index}">&times;</button>
         </div>
         ${item.location ? `<p class="detail-line">${escapeHtml(item.location)}</p>` : ""}
@@ -807,11 +839,21 @@ function renderPhotos() {
     .map(
       (photo) => `
         <figure class="pluto-photo">
-          <img src="${photo.src}" alt="${escapeHtml(photo.name || "Pluto photo")}" />
+          <button class="photo-open" type="button" data-photo-src="${photo.src}" data-photo-name="${escapeHtml(photo.name || "Pluto photo")}">
+            <img src="${photo.src}" alt="${escapeHtml(photo.name || "Pluto photo")}" />
+          </button>
         </figure>
       `
     )
     .join("");
+
+  grid.querySelectorAll("[data-photo-src]").forEach((button) => {
+    button.addEventListener("click", () => {
+      photoDialogImage.src = button.dataset.photoSrc;
+      photoDialogImage.alt = button.dataset.photoName;
+      photoDialog.showModal();
+    });
+  });
 }
 
 function escapeHtml(value) {

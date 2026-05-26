@@ -48,9 +48,7 @@
             </article>
 
             <div class="reason-controls">
-              <button class="icon-button" type="button" id="prev-reason" aria-label="Previous reason">&lsaquo;</button>
               <button class="primary-button" type="button" id="flip-reason">Flip</button>
-              <button class="icon-button" type="button" id="next-reason" aria-label="Next reason">&rsaquo;</button>
               <button class="secondary-button" type="button" id="random-reason">Surprise me</button>
             </div>
           </div>
@@ -184,6 +182,11 @@
         </section>
       </main>
     </div>
+
+    <dialog class="photo-dialog" id="photo-dialog">
+      <button class="dialog-close" type="button" id="close-photo" aria-label="Close photo">&times;</button>
+      <img id="photo-dialog-image" alt="Pluto photo full view" />
+    </dialog>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>

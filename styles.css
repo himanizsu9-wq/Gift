@@ -229,15 +229,15 @@ p {
 }
 
 .reason-controls {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 10px;
   align-content: end;
 }
 
 .reason-controls .primary-button,
 .reason-controls .secondary-button {
-  grid-column: span 2;
+  width: 100%;
 }
 
 .icon-button,
@@ -413,10 +413,22 @@ textarea:focus {
   font-size: 0.92rem;
 }
 
-.ratings span {
+.ratings label {
+  display: grid;
+  gap: 5px;
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.ratings input {
+  min-height: 38px;
   padding: 8px;
   border-radius: 6px;
   background: rgba(246, 213, 139, 0.38);
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-transform: none;
 }
 
 .album-tools {
@@ -508,6 +520,7 @@ textarea:focus {
   border: 1px solid rgba(79, 58, 49, 0.14);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.56);
+  transition: transform 180ms ease, background 180ms ease, opacity 180ms ease;
 }
 
 .try-card:not(:has(img)) {
@@ -519,6 +532,36 @@ textarea:focus {
   height: 92px;
   border-radius: 6px;
   object-fit: cover;
+}
+
+.try-card.done {
+  background: rgba(224, 232, 215, 0.78);
+  animation: checked-pop 260ms ease;
+}
+
+.try-card.done img,
+.try-card.done .detail-line,
+.try-card.done .try-notes {
+  opacity: 0.58;
+}
+
+.try-check {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+}
+
+.try-card.done .try-check .movie-title {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-thickness: 3px;
+  text-decoration-color: rgba(201, 133, 140, 0.74);
 }
 
 .detail-line,
@@ -598,12 +641,59 @@ textarea:focus {
   text-decoration-color: rgba(201, 133, 140, 0.74);
 }
 
-.pluto-photo img {
+.photo-open {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.pluto-photo img,
+.photo-open img {
   width: 100%;
   height: 100%;
   aspect-ratio: 1;
   object-fit: cover;
   display: block;
+}
+
+.photo-dialog {
+  width: min(94vw, 980px);
+  max-height: 92vh;
+  padding: 14px;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  background: var(--paper);
+  box-shadow: 12px 14px 0 rgba(62, 50, 46, 0.16);
+}
+
+.photo-dialog::backdrop {
+  background: rgba(62, 50, 46, 0.48);
+}
+
+.photo-dialog img {
+  display: block;
+  width: 100%;
+  max-height: 82vh;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.dialog-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 250, 241, 0.92);
+  color: var(--ink);
+  font-size: 1.5rem;
+  font-weight: 900;
+  line-height: 1;
 }
 
 .empty-album {
@@ -649,6 +739,20 @@ textarea:focus {
   }
 }
 
+@keyframes checked-pop {
+  0% {
+    transform: scale(1);
+  }
+
+  45% {
+    transform: scale(1.025) rotate(-0.35deg);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
 @media (max-width: 760px) {
   .app-shell {
     width: min(100% - 22px, 1180px);
@@ -685,19 +789,6 @@ textarea:focus {
 
   .reason-card {
     min-height: 330px;
-  }
-
-  .reason-controls {
-    grid-template-columns: 70px 1fr 70px;
-  }
-
-  .reason-controls .primary-button,
-  .reason-controls .secondary-button {
-    grid-column: auto;
-  }
-
-  .reason-controls .secondary-button {
-    grid-column: 1 / -1;
   }
 
   .rating-row,
